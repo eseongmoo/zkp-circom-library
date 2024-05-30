@@ -16,7 +16,20 @@ component main = MiMC7(91);
 
 컴파일 후 `snarkjs r1cs export json mimc.r1cs mimc.r1cs.json` 명령어로 mimc.r1cs의 json형태를 생성해줍니다.
 
+`node ./mimc_js/generate_witness.js ./mimc_js/mimc.wasm input.json witness.wtns`
+
 위 사항까지 진행했다면 셋업을 진행합니다.
 셋업에 필요한 Powers of Tau Ceremony 경우 생성하지 않고 [iden3 snarkjs repository](https://github.com/iden3/snarkjs?tab=readme-ov-file#7-prepare-phase-2)에서 다운받아 사용했습니다.
 
 `snarkjs groth16 setup mimc.r1cs pot14_final.ptau mimc_0000.zkey` 명령어를 통해 groth16을 설정하고 다음 명령어를 계속 진행합니다.
+`snarkjs zkey contribute mimc_0000.zkey mimc_0001.zkey --name="1st Contributor eseongmoo" -v`
+
+`snarkjs zkey export verificationkey mimc_0001.zkey verification_key.json` 명령어로 검증키를 추출합니다.
+
+`snarkjs groth16 prove mimc_0001.zkey witness.wtns proof.json public.json`
+
+`snarkjs zkey export solidityverifier mimc_0001.zkey verifier.sol`
+
+`snarkjs generatecall`
+
+`snarkjs groth16 verify verification_key.json public.json proof.json`
